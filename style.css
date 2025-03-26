@@ -181,6 +181,7 @@ body.dark .subtitle {
 }
 @media (max-width: 600px) {
   #donation-banner {
-    width: 100%;
+    width: 90%;
+    min-width: 600px;
   }
 }
