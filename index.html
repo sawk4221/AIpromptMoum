@@ -16,70 +16,76 @@
   </div>
 
   <h1>초안연구소 | Draft Lab</h1>
+  <input type="text" id="search-box" placeholder="프롬프트 검색..." style="display:block;margin:0 auto 20px auto;padding:8px;width:80%;max-width:400px;border-radius:8px;border:1px solid #ccc;" />
   <div class="tag-buttons" id="category-buttons"></div>
   <div class="prompt-grid" id="prompt-container"></div>
   <div id="toast">✅ 복사 완료!</div>
 
   <script>
-    const prompts = [];
-    let loaded = false;
+    let prompts = [];
 
     const container = document.getElementById("prompt-container");
     const tagButtons = document.getElementById("category-buttons");
     const toast = document.getElementById("toast");
+    const searchBox = document.getElementById("search-box");
 
     function showToast() {
       toast.style.opacity = 1;
       setTimeout(() => toast.style.opacity = 0, 1500);
     }
 
-    function renderButtons(filter = "전체보기") {
+    function renderButtons(filter = "전체보기", keyword = "") {
       container.innerHTML = "";
-      fetch('prompts.json')
-        .then(res => res.json())
-        .then(data => {
-          const filtered = filter === "전체보기" ? data : data.filter(p => p["카테고리"] === filter);
-          filtered.forEach(p => {
-            const btn = document.createElement("div");
-            btn.className = "prompt-button";
-            btn.textContent = p["버튼제목"];
-            btn.setAttribute("data-category", p["카테고리"]);
-            btn.onclick = () => {
-              navigator.clipboard.writeText(p["프롬프트"]);
-              showToast();
-            };
-            container.appendChild(btn);
-          });
-        });
+      const filtered = prompts.filter(p =>
+        (filter === "전체보기" || p["카테고리"] === filter) &&
+        (p["버튼제목"].includes(keyword) || p["프롬프트"].includes(keyword))
+      );
+      filtered.forEach(p => {
+        const btn = document.createElement("div");
+        btn.className = "prompt-button";
+        btn.textContent = p["버튼제목"];
+        btn.setAttribute("data-category", p["카테고리"]);
+        btn.onclick = () => {
+          navigator.clipboard.writeText(p["프롬프트"]);
+          showToast();
+        };
+        container.appendChild(btn);
+      });
     }
 
     function renderTags() {
-      fetch('prompts.json')
-        .then(res => res.json())
-        .then(data => {
-          const categories = ["전체보기", ...new Set(data.map(p => p["카테고리"]))];
-          tagButtons.innerHTML = "";
-          categories.forEach(tag => {
-            const btn = document.createElement("button");
-            btn.textContent = tag;
-            btn.className = "tag-button";
-            btn.onclick = () => {
-              document.querySelectorAll(".tag-button").forEach(b => b.classList.remove("active"));
-              btn.classList.add("active");
-              renderButtons(tag);
-            };
-            tagButtons.appendChild(btn);
-          });
-          tagButtons.querySelector("button").classList.add("active");
-          renderButtons("전체보기");
-        });
+      const categories = ["전체보기", ...new Set(prompts.map(p => p["카테고리"]))];
+      tagButtons.innerHTML = "";
+      categories.forEach(tag => {
+        const btn = document.createElement("button");
+        btn.textContent = tag;
+        btn.className = "tag-button";
+        btn.onclick = () => {
+          document.querySelectorAll(".tag-button").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          renderButtons(tag, searchBox.value);
+        };
+        tagButtons.appendChild(btn);
+      });
+      tagButtons.querySelector("button").classList.add("active");
+      renderButtons("전체보기", "");
     }
 
     document.getElementById("darkToggle").addEventListener("change", function () {
       document.body.classList.toggle("dark", this.checked);
     });
 
-    renderTags();
+    searchBox.addEventListener("input", () => {
+      const activeTag = document.querySelector(".tag-button.active");
+      renderButtons(activeTag ? activeTag.textContent : "전체보기", searchBox.value);
+    });
+
+    fetch("prompts.json")
+      .then(res => res.json())
+      .then(data => {
+        prompts = data;
+        renderTags();
+      });
   </script>
 </body>
 </html>
