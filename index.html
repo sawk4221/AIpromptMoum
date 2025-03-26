@@ -6,6 +6,28 @@
   <title>초안연구소 | Draft Lab</title>
   <link rel="stylesheet" href="style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    #preview-box {
+      position: absolute;
+      background: #fff;
+      color: #000;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+      padding: 10px;
+      display: none;
+      width: 280px;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+    body.dark #preview-box {
+      background: #333;
+      color: #fff;
+      border-color: #777;
+    }
+  </style>
 </head>
 <body>
   <div id="switch-container">
@@ -20,14 +42,16 @@
   <div class="tag-buttons" id="category-buttons"></div>
   <div class="prompt-grid" id="prompt-container"></div>
   <div id="toast">✅ 복사 완료!</div>
+  <div id="preview-box"></div>
 
   <script>
     let prompts = [];
-
+    let previewTimeout = null;
     const container = document.getElementById("prompt-container");
     const tagButtons = document.getElementById("category-buttons");
     const toast = document.getElementById("toast");
     const searchBox = document.getElementById("search-box");
+    const previewBox = document.getElementById("preview-box");
 
     function showToast() {
       toast.style.opacity = 1;
@@ -49,6 +73,21 @@
           navigator.clipboard.writeText(p["프롬프트"]);
           showToast();
         };
+
+        btn.onmouseenter = e => {
+          previewTimeout = setTimeout(() => {
+            previewBox.innerText = p["프롬프트"];
+            previewBox.style.left = `${e.pageX + 10}px`;
+            previewBox.style.top = `${e.pageY + 10}px`;
+            previewBox.style.display = "block";
+          }, 600);
+        };
+
+        btn.onmouseleave = () => {
+          clearTimeout(previewTimeout);
+          previewBox.style.display = "none";
+        };
+
         container.appendChild(btn);
       });
     }
