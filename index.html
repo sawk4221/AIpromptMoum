@@ -203,7 +203,7 @@ body.dark #preview-box {
       renderButtons(searchBox.value, activeTag ? activeTag.textContent : "");
     });
 
-    fetch("prompts_fullset.json")
+    fetch("prompts_combined_fixed.json")
       .then(res => res.json())
       .then(data => {
         prompts = data;
