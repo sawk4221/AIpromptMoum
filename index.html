@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>초안연구소 | Draft Lab</title>
-  <link rel="stylesheet" href="style_final.css">
+  <link rel="stylesheet" href="style.css">
   <style>
     #toast {
       position: fixed;
@@ -54,10 +54,9 @@
     </button>
   </div>
   <header style="text-align: center; margin: 50px 20px 30px;">
-    <h1 style="font-size: 2.2em; margin-bottom: 0; font-weight: bold; color: #0077cc;">초안연구소 <span style='color:#333'>| Draft Lab</span></h1>
-    <p style="font-size: 1.1em; color: #555; margin-top: 8px;">기획자, 작가, 마케터, 크리에이터를 위한</p>
-    <p style="font-size: 1.3em; font-weight: 600; margin: 8px 0 18px; color: #222;">‘복붙 가능한 문장 초안 플랫폼’</p>
-    <p style="font-size: 1em; font-style: italic; color: #333; line-height: 1.6;">클릭 한 번이면 초안 완성.<br>지금 당신의 아이디어, <strong>여기서 시작하세요.</strong></p>
+    <h1 style="font-size: 2.2em;">초안연구소 <span>| Draft Lab</span></h1>
+    <p>기획자, 작가, 마케터, 크리에이터를 위한 ‘복붙 가능한 문장 초안 플랫폼’</p>
+    <p><i>클릭 한 번이면 초안 완성.<br>지금 당신의 아이디어, <strong>여기서 시작하세요.</strong></i></p>
   </header>
 
   <input type="text" id="search-box" placeholder="프롬프트 검색..." />
@@ -72,21 +71,10 @@
     const searchBox = document.getElementById("search-box");
     const tagButtonsContainer = document.getElementById("category-buttons");
     const darkToggle = document.getElementById("dark-mode-toggle");
-    const icon = document.getElementById("dark-mode-icon");
-    const label = document.getElementById("dark-mode-label");
     const toast = document.getElementById("toast");
     const previewBox = document.getElementById("preview-box");
 
-    function updateDarkIcon() {
-      icon.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
-      label.textContent = document.body.classList.contains("dark") ? "라이트모드" : "다크모드";
-    }
-
-    darkToggle.addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      updateDarkIcon();
-    });
-    updateDarkIcon();
+    darkToggle.onclick = () => document.body.classList.toggle("dark");
 
     function showToast() {
       toast.style.opacity = 1;
@@ -97,17 +85,19 @@
       container.innerHTML = "";
       const filtered = prompts.filter(p =>
         (p["버튼제목"].includes(filter) || p["프롬프트"].includes(filter)) &&
-        (tagFilter && tagFilter !== "전체보기" ? p["카테고리"] === tagFilter : true)
+        (!tagFilter || tagFilter === "전체보기" || p["카테고리"] === tagFilter)
       );
+
       filtered.forEach(p => {
         const btn = document.createElement("div");
         btn.className = "prompt-button";
         btn.setAttribute("data-category", p["카테고리"]);
         btn.textContent = p["버튼제목"];
+        
         btn.onclick = () => {
-          navigator.clipboard.writeText(p["프롬프트"]);
-          showToast();
+          navigator.clipboard.writeText(p["프롬프트"]).then(showToast);
         };
+
         btn.onmouseenter = e => {
           previewBox.innerText = p["프롬프트"];
           previewBox.style.left = `${e.pageX + 10}px`;
@@ -115,13 +105,13 @@
           previewBox.style.display = "block";
         };
         btn.onmouseleave = () => previewBox.style.display = "none";
+
         container.appendChild(btn);
       });
     }
 
     function buildTags() {
-      const uniqueTags = ["전체보기", ...new Set(prompts.map(p => p["카테고리"]).filter(Boolean))];
-      tagButtonsContainer.innerHTML = "";
+      const uniqueTags = ["전체보기", ...new Set(prompts.map(p => p["카테고리"]))];
       uniqueTags.forEach(tag => {
         const btn = document.createElement("button");
         btn.className = "tag-button";
@@ -135,10 +125,10 @@
       });
     }
 
-    searchBox.addEventListener("input", () => {
+    searchBox.oninput = () => {
       const activeTag = document.querySelector(".tag-button.active");
       renderButtons(searchBox.value, activeTag ? activeTag.textContent : "");
-    });
+    };
 
     fetch("prompts.json")
       .then(res => res.json())
