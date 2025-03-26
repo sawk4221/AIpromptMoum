@@ -84,3 +84,6 @@ body.dark .prompt-button {
   border: none;
   cursor: pointer;
 }
+body.dark header h1 {
+  color: white;
+}
