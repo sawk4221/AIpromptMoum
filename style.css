@@ -1,9 +1,8 @@
 
 body {
   font-family: sans-serif;
-  background-color: #f8f8f8;
-  color: #222;
   padding: 20px;
+  background-color: #f8f8f8;
   transition: background-color 0.3s, color 0.3s;
 }
 body.dark {
@@ -12,67 +11,24 @@ body.dark {
 }
 h1 {
   text-align: center;
+  color: #333;
 }
 body.dark h1 {
-  color: white;
+  color: #fff;
 }
-#switch-container {
-  position: fixed;
-  top: 15px;
-  right: 15px;
-  z-index: 1000;
-}
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 28px;
-}
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-input:checked + .slider {
-  background-color: #FFA533;
-}
-input:checked + .slider:before {
-  transform: translateX(22px);
-}
-
 .tag-buttons {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
-  margin: 20px 0;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
 }
 .tag-button {
   background: #4CAF50;
   color: white;
   border: none;
-  padding: 8px 14px;
   border-radius: 20px;
+  padding: 6px 12px;
   cursor: pointer;
 }
 .tag-button.active {
@@ -81,22 +37,16 @@ input:checked + .slider:before {
 }
 .prompt-grid {
   display: flex;
+  gap: 8px;
   flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
 }
 .prompt-button {
-  padding: 12px 18px;
+  padding: 10px 15px;
   border-radius: 8px;
-  max-width: 220px;
   cursor: pointer;
-  background-color: #0077cc;
   color: white;
-  text-align: center;
-  transition: background-color 0.2s;
-}
-.prompt-button:hover {
-  filter: brightness(1.15);
+  background-color: #0077cc;
 }
 .prompt-button[data-category="기획 초기"],
 .prompt-button[data-category="스토리 전개"],
@@ -115,38 +65,10 @@ body.dark .prompt-button[data-category="캐릭터"],
 body.dark .prompt-button[data-category="클로징/시리즈"] {
   background-color: #cc7a29;
 }
-.prompt-button:hover {
-  filter: brightness(1.1);
-}
-
-#preview-box {
-  position: absolute;
-  background: #fff;
-  color: #000;
-  border: 1px solid #aaa;
-  border-radius: 8px;
-  padding: 12px;
-  display: none;
-  max-width: 300px;
-  white-space: pre-wrap;
-  line-height: 1.5;
-  font-size: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  z-index: 1000;
-}
-body.dark #preview-box {
-  background: #333;
-  color: #fff;
-  border-color: #777;
-}
-
-footer {
-  margin-top: 40px;
-  padding: 20px;
-  text-align: center;
-  font-size: 14px;
-  color: #666;
-}
-body.dark footer {
-  color: #aaa;
+.dark-mode-switch {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 24px;
 }
