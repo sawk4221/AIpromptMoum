@@ -10,6 +10,10 @@ body.dark {
 }
 h1 {
   text-align: center;
+  color: #333;
+}
+body.dark h1 {
+  color: #ffffff;
 }
 #search-box {
   display: block;
@@ -35,7 +39,7 @@ h1 {
   cursor: pointer;
 }
 .tag-button.active {
-  background: #0077cc;
+  background: #FFA533;
   color: white;
 }
 .prompt-grid {
@@ -53,15 +57,15 @@ h1 {
   max-width: 240px;
   text-align: center;
   color: white;
-  background-color: #0077cc; /* default button color */
+  background-color: #FFA533;
 }
 body.dark .prompt-button {
-  background-color: #333;
+  background-color: #cc7a29;
   color: #fff;
   border-color: #666;
 }
 .prompt-button:hover {
-  background-color: #3399ff;
+  background-color: #FFB866;
 }
 .bookmark {
   float: right;
@@ -83,16 +87,4 @@ body.dark .prompt-button {
   background: none;
   border: none;
   cursor: pointer;
-}
-body.dark header h1 {
-  color: white;
-}
-
-/* Specific Category Colors */
-.prompt-button[data-category="기획 초기"],
-.prompt-button[data-category="스토리 전개"],
-.prompt-button[data-category="대사와 리듬"],
-.prompt-button[data-category="캐릭터"],
-.prompt-button[data-category="클로징/시리즈"] {
-  filter: brightness(70%);
 }
