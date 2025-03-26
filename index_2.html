@@ -8,18 +8,22 @@
   <link rel="stylesheet" href="style.css">
   <style>
     #toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #0077cc;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 24px;
-      opacity: 0;
-      transition: opacity 0.4s;
-      z-index: 999;
-    }
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20vw;
+  min-width: 160px;
+  background-color: rgba(37, 37, 37, 0.6);
+  color: white;
+  padding: 16px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.4s;
+  z-index: 9999;
+}
     #preview-box {
   position: absolute;
   background: #fff;
@@ -40,7 +44,12 @@ body.dark #preview-box {
   color: #fff;
   border-color: #777;
 }
-  </style>
+  
+  body.dark header h1 {
+    color: white;
+  }
+</style>
+
 </head>
 <body>
 
@@ -61,7 +70,12 @@ body.dark #preview-box {
         font-size: 0.95em;
       }
     }
-  </style>
+  
+  body.dark header h1 {
+    color: white;
+  }
+</style>
+
 
   <div class="top-bar">
     <button id="dark-mode-toggle">
@@ -74,7 +88,7 @@ body.dark #preview-box {
   <input type="text" id="search-box" placeholder="프롬프트 검색..." />
   <div class="tag-buttons" id="category-buttons"></div>
   <div class="prompt-grid" id="prompt-container"></div>
-  <div id="toast">복사 완료!</div>
+  <div id="toast">✅ 복사 완료!</div>
   <div id="preview-box"></div>
 
   <script>
