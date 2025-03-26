@@ -32,15 +32,16 @@ body.dark h1 {
   margin-bottom: 20px;
 }
 .tag-button {
-  background: #ddd;
+  background: #4CAF50;
   border: none;
   border-radius: 20px;
   padding: 8px 14px;
   cursor: pointer;
+  color: white;
 }
 .tag-button.active {
-  background: #FFA533;
-  color: white;
+  background: #FFC107;
+  color: black;
 }
 .prompt-grid {
   display: flex;
@@ -57,34 +58,22 @@ body.dark h1 {
   max-width: 240px;
   text-align: center;
   color: white;
+  background-color: #0077cc;
+}
+.prompt-button[data-category="기획 초기"],
+.prompt-button[data-category="스토리 전개"],
+.prompt-button[data-category="대사와 리듬"],
+.prompt-button[data-category="캐릭터"],
+.prompt-button[data-category="클로징/시리즈"] {
   background-color: #FFA533;
 }
 body.dark .prompt-button {
+  background-color: #005599;
+}
+body.dark .prompt-button[data-category="기획 초기"],
+body.dark .prompt-button[data-category="스토리 전개"],
+body.dark .prompt-button[data-category="대사와 리듬"],
+body.dark .prompt-button[data-category="캐릭터"],
+body.dark .prompt-button[data-category="클로징/시리즈"] {
   background-color: #cc7a29;
-  color: #fff;
-  border-color: #666;
-}
-.prompt-button:hover {
-  background-color: #FFB866;
-}
-.bookmark {
-  float: right;
-  font-size: 18px;
-  margin-left: 6px;
-  cursor: pointer;
-}
-.top-bar {
-  position: fixed;
-  top: 10px;
-  right: 20px;
-  z-index: 999;
-}
-#dark-mode-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 16px;
-  background: none;
-  border: none;
-  cursor: pointer;
 }

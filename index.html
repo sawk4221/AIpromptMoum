@@ -2,141 +2,46 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>초안연구소 | Draft Lab</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    #toast {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 20vw;
-      min-width: 160px;
-      background-color: rgba(37, 37, 37, 0.6);
-      color: white;
-      padding: 16px;
-      text-align: center;
-      font-size: 16px;
-      border-radius: 12px;
-      opacity: 0;
-      transition: opacity 0.4s;
-      z-index: 9999;
-    }
-    #preview-box {
-      position: absolute;
-      background: #fff;
-      color: #000;
-      border: 1px solid #aaa;
-      border-radius: 8px;
-      padding: 10px;
-      display: none;
-      width: 280px;
-      white-space: pre-wrap;
-      line-height: 1.5;
-      font-size: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      z-index: 1000;
-    }
-    body.dark #preview-box {
-      background: #333;
-      color: #fff;
-      border-color: #777;
-    }
-  </style>
 </head>
 <body>
-  <div class="top-bar">
-    <button id="dark-mode-toggle">
-      <span id="dark-mode-icon">🌙</span>
-      <span id="dark-mode-label">다크모드</span>
-    </button>
-  </div>
-  <header style="text-align: center; margin: 50px 20px 30px;">
-    <h1 style="font-size: 2.2em;">초안연구소 <span>| Draft Lab</span></h1>
-    <p>기획자, 작가, 마케터, 크리에이터를 위한 ‘복붙 가능한 문장 초안 플랫폼’</p>
-    <p><i>클릭 한 번이면 초안 완성.<br>지금 당신의 아이디어, <strong>여기서 시작하세요.</strong></i></p>
-  </header>
-
-  <input type="text" id="search-box" placeholder="프롬프트 검색..." />
-  <div class="tag-buttons" id="category-buttons"></div>
-  <div class="prompt-grid" id="prompt-container"></div>
-  <div id="toast">✅ 복사 완료!</div>
-  <div id="preview-box"></div>
-
+  <h1>초안연구소 | Draft Lab</h1>
+  <div id="category-buttons" class="tag-buttons"></div>
+  <div id="prompt-container" class="prompt-grid"></div>
   <script>
-    let prompts = [];
-    const container = document.getElementById("prompt-container");
-    const searchBox = document.getElementById("search-box");
-    const tagButtonsContainer = document.getElementById("category-buttons");
-    const darkToggle = document.getElementById("dark-mode-toggle");
-    const toast = document.getElementById("toast");
-    const previewBox = document.getElementById("preview-box");
+    fetch('prompts.json').then(res=>res.json()).then(prompts=>{
+      const container=document.getElementById("prompt-container");
+      const categories=[...new Set(prompts.map(p=>p["카테고리"]))];
+      categories.unshift("전체보기");
 
-    darkToggle.onclick = () => document.body.classList.toggle("dark");
-
-    function showToast() {
-      toast.style.opacity = 1;
-      setTimeout(() => toast.style.opacity = 0, 1500);
-    }
-
-    function renderButtons(filter = "", tagFilter = "") {
-      container.innerHTML = "";
-      const filtered = prompts.filter(p =>
-        (p["버튼제목"].includes(filter) || p["프롬프트"].includes(filter)) &&
-        (!tagFilter || tagFilter === "전체보기" || p["카테고리"] === tagFilter)
-      );
-
-      filtered.forEach(p => {
-        const btn = document.createElement("div");
-        btn.className = "prompt-button";
-        btn.setAttribute("data-category", p["카테고리"]);
-        btn.textContent = p["버튼제목"];
-        
-        btn.onclick = () => {
-          navigator.clipboard.writeText(p["프롬프트"]).then(showToast);
-        };
-
-        btn.onmouseenter = e => {
-          previewBox.innerText = p["프롬프트"];
-          previewBox.style.left = `${e.pageX + 10}px`;
-          previewBox.style.top = `${e.pageY + 10}px`;
-          previewBox.style.display = "block";
-        };
-        btn.onmouseleave = () => previewBox.style.display = "none";
-
-        container.appendChild(btn);
-      });
-    }
-
-    function buildTags() {
-      const uniqueTags = ["전체보기", ...new Set(prompts.map(p => p["카테고리"]))];
-      uniqueTags.forEach(tag => {
-        const btn = document.createElement("button");
-        btn.className = "tag-button";
-        btn.textContent = tag;
-        btn.onclick = () => {
-          document.querySelectorAll(".tag-button").forEach(b => b.classList.remove("active"));
+      categories.forEach(cat=>{
+        const btn=document.createElement("button");
+        btn.textContent=cat;
+        btn.className="tag-button";
+        btn.onclick=()=>{
+          document.querySelectorAll(".tag-button").forEach(b=>b.classList.remove("active"));
           btn.classList.add("active");
-          renderButtons(searchBox.value, tag);
+          renderButtons(cat);
         };
-        tagButtonsContainer.appendChild(btn);
+        document.getElementById("category-buttons").appendChild(btn);
       });
-    }
 
-    searchBox.oninput = () => {
-      const activeTag = document.querySelector(".tag-button.active");
-      renderButtons(searchBox.value, activeTag ? activeTag.textContent : "");
-    };
-
-    fetch("prompts.json")
-      .then(res => res.json())
-      .then(data => {
-        prompts = data;
-        buildTags();
-        renderButtons();
-      });
+      function renderButtons(category){
+        container.innerHTML="";
+        prompts.filter(p=>category==="전체보기"||p["카테고리"]===category)
+        .forEach(p=>{
+          const btn=document.createElement("div");
+          btn.className="prompt-button";
+          btn.setAttribute("data-category", p["카테고리"]);
+          btn.textContent=p["버튼제목"];
+          btn.onclick=()=>navigator.clipboard.writeText(p["프롬프트"]);
+          container.appendChild(btn);
+        });
+      }
+      renderButtons("전체보기");
+    });
   </script>
 </body>
 </html>
