@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>프롬프트 복사</title>
+  <link rel="stylesheet" href="style_custom.css">
+  <style>
+    #toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20vw;
+  min-width: 160px;
+  background-color: rgba(37, 37, 37, 0.6);
+  color: white;
+  padding: 16px;
+  text-align: center;
+  font-size: 16px;
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.4s;
+  z-index: 9999;
+}
+    #preview-box {
+  position: absolute;
+  background: #fff;
+  color: #000;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  padding: 10px;
+  display: none;
+  width: 280px;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+body.dark #preview-box {
+  background: #333;
+  color: #fff;
+  border-color: #777;
+}
+  
+  body.dark header h1 {
+    color: white;
+  }
+</style>
+
+</head>
+<body>
+
+  
+  <header style="text-align: center; margin: 50px 20px 30px;">
+    <h1 style="font-size: 2.2em; margin-bottom: 0; font-weight: bold; color: #0077cc;">초안연구소 <span style='color:#333'>| Draft Lab</span></h1>
+    <p style="font-size: 1.1em; color: #555; margin-top: 8px;">기획자, 작가, 마케터, 크리에이터를 위한</p>
+    <p style="font-size: 1.3em; font-weight: 600; margin: 8px 0 18px; color: #222;">‘복붙 가능한 문장 초안 플랫폼’</p>
+    <p style="font-size: 1em; font-style: italic; color: #333; line-height: 1.6;">클릭 한 번이면 초안 완성.<br>지금 당신의 아이디어, <strong>여기서 시작하세요.</strong></p>
+  </header>
+
+  <style>
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 1.5em;
+      }
+      header p {
+        font-size: 0.95em;
+      }
+    }
+  
+  body.dark header h1 {
+    color: white;
+  }
+</style>
+
+
+  <div class="top-bar">
+    <button id="dark-mode-toggle">
+      <span id="dark-mode-icon">🌙</span>
+      <span id="dark-mode-label">다크모드</span>
+    </button>
+  </div>
+
+  <h1>프롬프트 모음</h1>
+  <input type="text" id="search-box" placeholder="프롬프트 검색..." />
+  <div class="tag-buttons" id="category-buttons"></div>
+  <div class="prompt-grid" id="prompt-container"></div>
+  <div id="toast">✅ 복사 완료!</div>
+  <div id="preview-box"></div>
+
+  <script>
+    let prompts = [];
+    const container = document.getElementById("prompt-container");
+    const searchBox = document.getElementById("search-box");
+    const tagButtonsContainer = document.getElementById("category-buttons");
+    const darkToggle = document.getElementById("dark-mode-toggle");
+    const icon = document.getElementById("dark-mode-icon");
+    const label = document.getElementById("dark-mode-label");
+    const toast = document.getElementById("toast");
+    const previewBox = document.getElementById("preview-box");
+    const bookmarked = JSON.parse(localStorage.getItem("bookmarks") || "[]");
+
+    function updateDarkIcon() {
+      icon.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+      label.textContent = document.body.classList.contains("dark") ? "라이트모드" : "다크모드";
+    }
+
+    darkToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("dark-mode", document.body.classList.contains("dark") ? "on" : "off");
+      updateDarkIcon();
+    });
+
+    if (localStorage.getItem("dark-mode") === "on") {
+      document.body.classList.add("dark");
+    }
+    updateDarkIcon();
+
+    function showToast() {
+      toast.style.opacity = 1;
+      setTimeout(() => {
+        toast.style.opacity = 0;
+      }, 1500);
+    }
+
+    function renderButtons(filter = "", tagFilter = "") {
+      container.innerHTML = "";
+      const filtered = prompts.filter(p =>
+        (p["버튼제목"]?.includes(filter) || p["프롬프트"]?.includes(filter)) &&
+        (tagFilter && tagFilter !== "전체보기" ? p["카테고리"] === tagFilter : true)
+      );
+      filtered.forEach((p, index) => {
+        const btn = document.createElement("div");
+        btn.className = "prompt-button";
+        btn.innerHTML = `<span>${p["버튼제목"]}</span><span class="bookmark" data-id="${index}">${bookmarked.includes(index) ? "★" : "☆"}</span>`;
+
+        btn.onclick = (e) => {
+          if (e.target.classList.contains("bookmark")) return;
+          navigator.clipboard.writeText(p["프롬프트"]);
+          showToast();
+        };
+
+        btn.addEventListener("contextmenu", e => {
+          e.preventDefault();
+          previewBox.innerText = p["프롬프트"];
+          previewBox.style.left = `${e.pageX + 10}px`;
+          previewBox.style.top = `${e.pageY + 10}px`;
+          previewBox.style.display = "block";
+        });
+
+        let pressTimer;
+        btn.addEventListener("touchstart", () => {
+          pressTimer = setTimeout(() => {
+            previewBox.innerText = p["프롬프트"];
+            previewBox.style.left = "50%";
+            previewBox.style.top = "40%";
+            previewBox.style.transform = "translate(-50%, -50%)";
+            previewBox.style.display = "block";
+          }, 600);
+        });
+        btn.addEventListener("touchend", () => clearTimeout(pressTimer));
+        document.addEventListener("click", () => previewBox.style.display = "none");
+
+        const star = btn.querySelector(".bookmark");
+        star.onclick = (e) => {
+          e.stopPropagation();
+          const id = parseInt(e.target.dataset.id);
+          const idx = bookmarked.indexOf(id);
+          if (idx === -1) {
+            bookmarked.push(id);
+          } else {
+            bookmarked.splice(idx, 1);
+          }
+          localStorage.setItem("bookmarks", JSON.stringify(bookmarked));
+          renderButtons(searchBox.value, document.querySelector(".tag-button.active")?.textContent || "");
+        };
+
+        container.appendChild(btn);
+      });
+    }
+
+    function buildTags() {
+      const uniqueTags = ["전체보기", ...new Set(prompts.map(p => p["카테고리"] || "기타").filter(Boolean))];
+      tagButtonsContainer.innerHTML = "";
+      uniqueTags.forEach(tag => {
+        const btn = document.createElement("button");
+        btn.className = "tag-button";
+        btn.textContent = tag;
+        btn.onclick = () => {
+          document.querySelectorAll(".tag-button").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          renderButtons(searchBox.value, tag);
+        };
+        tagButtonsContainer.appendChild(btn);
+      });
+    }
+
+    searchBox.addEventListener("input", () => {
+      const activeTag = document.querySelector(".tag-button.active");
+      renderButtons(searchBox.value, activeTag ? activeTag.textContent : "");
+    });
+
+    fetch("prompts_final.json")
+      .then(res => res.json())
+      .then(data => {
+        prompts = data;
+        buildTags();
+        renderButtons();
+      });
+  </script>
+</body>
+</html>
