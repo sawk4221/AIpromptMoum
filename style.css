@@ -3,6 +3,7 @@ body {
   font-family: sans-serif;
   padding: 20px;
   background-color: #f8f8f8;
+  transition: background-color 0.3s, color 0.3s;
 }
 body.dark {
   background-color: #222;
@@ -15,29 +16,20 @@ h1 {
 body.dark h1 {
   color: #ffffff;
 }
-#search-box {
-  display: block;
-  margin: 0 auto 10px auto;
-  padding: 10px;
-  width: 80%;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
 .tag-buttons {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
 }
 .tag-button {
   background: #4CAF50;
+  color: white;
   border: none;
   border-radius: 20px;
-  padding: 8px 14px;
+  padding: 6px 12px;
   cursor: pointer;
-  color: white;
 }
 .tag-button.active {
   background: #FFC107;
@@ -45,20 +37,17 @@ body.dark h1 {
 }
 .prompt-grid {
   display: flex;
+  gap: 8px;
   flex-wrap: wrap;
-  gap: 10px;
   justify-content: center;
 }
 .prompt-button {
-  padding: 12px 16px;
-  border: 1px solid #aaa;
+  padding: 10px 15px;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
-  max-width: 240px;
-  text-align: center;
   color: white;
   background-color: #0077cc;
+  transition: background-color 0.2s;
 }
 .prompt-button[data-category="기획 초기"],
 .prompt-button[data-category="스토리 전개"],
@@ -76,4 +65,11 @@ body.dark .prompt-button[data-category="대사와 리듬"],
 body.dark .prompt-button[data-category="캐릭터"],
 body.dark .prompt-button[data-category="클로징/시리즈"] {
   background-color: #cc7a29;
+}
+.dark-mode-switch {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 24px;
 }
