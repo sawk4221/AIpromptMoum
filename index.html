@@ -6,41 +6,6 @@
   <title>초안연구소 | Draft Lab</title>
   <link rel="stylesheet" href="style.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    #preview-box {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #fff;
-      color: #000;
-      border: 1px solid #aaa;
-      border-radius: 8px;
-      padding: 12px;
-      display: none;
-      max-width: 80%;
-      white-space: pre-wrap;
-      line-height: 1.5;
-      font-size: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      z-index: 1000;
-    }
-    body.dark #preview-box {
-      background: #333;
-      color: #fff;
-      border-color: #777;
-    }
-    footer {
-      margin-top: 40px;
-      padding: 20px;
-      text-align: center;
-      font-size: 14px;
-      color: #666;
-    }
-    body.dark footer {
-      color: #aaa;
-    }
-  </style>
 </head>
 <body>
   <div id="switch-container">
@@ -92,9 +57,11 @@
           showToast();
         };
 
-        btn.onmouseenter = () => {
+        btn.onmouseenter = e => {
           previewTimeout = setTimeout(() => {
             previewBox.innerText = p["프롬프트"];
+            previewBox.style.left = `${e.pageX}px`;
+            previewBox.style.top = `${e.pageY + 20}px`;
             previewBox.style.display = "block";
           }, 600);
         };
@@ -103,6 +70,23 @@
           clearTimeout(previewTimeout);
           previewBox.style.display = "none";
         };
+
+        // 모바일 long press (iOS 대응)
+        let touchTimer;
+        btn.addEventListener("touchstart", e => {
+          e.preventDefault();
+          touchTimer = setTimeout(() => {
+            const touch = e.touches[0];
+            previewBox.innerText = p["프롬프트"];
+            previewBox.style.left = `${touch.clientX}px`;
+            previewBox.style.top = `${touch.clientY + 20}px`;
+            previewBox.style.display = "block";
+          }, 600);
+        });
+        btn.addEventListener("touchend", () => {
+          clearTimeout(touchTimer);
+          setTimeout(() => previewBox.style.display = "none", 300);
+        });
 
         container.appendChild(btn);
       });

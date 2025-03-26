@@ -93,6 +93,10 @@ input:checked + .slider:before {
   background-color: #0077cc;
   color: white;
   text-align: center;
+  transition: background-color 0.2s;
+}
+.prompt-button:hover {
+  filter: brightness(1.15);
 }
 .prompt-button[data-category="기획 초기"],
 .prompt-button[data-category="스토리 전개"],
@@ -111,19 +115,38 @@ body.dark .prompt-button[data-category="캐릭터"],
 body.dark .prompt-button[data-category="클로징/시리즈"] {
   background-color: #cc7a29;
 }
-#toast {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200px;
-  background-color: rgba(37,37,37,0.6);
-  color: white;
+.prompt-button:hover {
+  filter: brightness(1.1);
+}
+
+#preview-box {
+  position: absolute;
+  background: #fff;
+  color: #000;
+  border: 1px solid #aaa;
+  border-radius: 8px;
+  padding: 12px;
+  display: none;
+  max-width: 300px;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+body.dark #preview-box {
+  background: #333;
+  color: #fff;
+  border-color: #777;
+}
+
+footer {
+  margin-top: 40px;
+  padding: 20px;
   text-align: center;
-  padding: 14px;
-  border-radius: 12px;
-  font-size: 16px;
-  opacity: 0;
-  transition: opacity 0.3s;
-  z-index: 9999;
+  font-size: 14px;
+  color: #666;
+}
+body.dark footer {
+  color: #aaa;
 }
