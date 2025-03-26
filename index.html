@@ -4,7 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>초안연구소 | Draft Lab</title>
-  <link rel="stylesheet" href="style_switch.css">
+  <link rel="stylesheet" href="style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
   <div class="dark-mode-switch" onclick="toggleDarkMode()">
@@ -13,6 +14,7 @@
   <h1>초안연구소 | Draft Lab</h1>
   <div id="category-buttons" class="tag-buttons"></div>
   <div id="prompt-container" class="prompt-grid"></div>
+
   <script>
     function toggleDarkMode() {
       document.body.classList.toggle("dark");
@@ -20,37 +22,43 @@
         document.body.classList.contains("dark") ? "🌙" : "🌞";
     }
 
-    fetch('prompts.json').then(res=>res.json()).then(prompts=>{
-      const container=document.getElementById("prompt-container");
-      const categories=[...new Set(prompts.map(p=>p["카테고리"]))];
-      categories.unshift("전체보기");
+    fetch('prompts.json')
+      .then(response => response.json())
+      .then(data => {
+        const prompts = data;
+        const container = document.getElementById("prompt-container");
+        const tagContainer = document.getElementById("category-buttons");
 
-      categories.forEach(cat=>{
-        const btn=document.createElement("button");
-        btn.textContent=cat;
-        btn.className="tag-button";
-        btn.onclick=()=>{
-          document.querySelectorAll(".tag-button").forEach(b=>b.classList.remove("active"));
-          btn.classList.add("active");
-          renderButtons(cat);
-        };
-        document.getElementById("category-buttons").appendChild(btn);
-      });
+        const categories = ["전체보기", ...new Set(prompts.map(p => p["카테고리"]))];
 
-      function renderButtons(category){
-        container.innerHTML="";
-        prompts.filter(p=>category==="전체보기"||p["카테고리"]===category)
-        .forEach(p=>{
-          const btn=document.createElement("div");
-          btn.className="prompt-button";
-          btn.setAttribute("data-category", p["카테고리"]);
-          btn.textContent=p["버튼제목"];
-          btn.onclick=()=>navigator.clipboard.writeText(p["프롬프트"]);
-          container.appendChild(btn);
+        categories.forEach(cat => {
+          const btn = document.createElement("button");
+          btn.textContent = cat;
+          btn.className = "tag-button";
+          btn.onclick = () => {
+            document.querySelectorAll(".tag-button").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderPrompts(cat);
+          };
+          tagContainer.appendChild(btn);
         });
-      }
-      renderButtons("전체보기");
-    });
+
+        function renderPrompts(category) {
+          container.innerHTML = "";
+          const filtered = prompts.filter(p => category === "전체보기" || p["카테고리"] === category);
+          filtered.forEach(p => {
+            const div = document.createElement("div");
+            div.className = "prompt-button";
+            div.setAttribute("data-category", p["카테고리"]);
+            div.textContent = p["버튼제목"];
+            div.onclick = () => navigator.clipboard.writeText(p["프롬프트"]);
+            container.appendChild(div);
+          });
+        }
+
+        renderPrompts("전체보기");
+        tagContainer.querySelector("button").classList.add("active");
+      });
   </script>
 </body>
 </html>

@@ -14,7 +14,7 @@ h1 {
   color: #333;
 }
 body.dark h1 {
-  color: #ffffff;
+  color: #fff;
 }
 .tag-buttons {
   display: flex;
@@ -47,7 +47,6 @@ body.dark h1 {
   cursor: pointer;
   color: white;
   background-color: #0077cc;
-  transition: background-color 0.2s;
 }
 .prompt-button[data-category="기획 초기"],
 .prompt-button[data-category="스토리 전개"],
