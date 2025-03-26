@@ -167,7 +167,7 @@
       renderButtons(activeTag ? activeTag.textContent : "전체보기", searchBox.value);
     });
 
-    fetch("prompts.json")
+    fetch("prompts_restored.json")
       .then(res => res.json())
       .then(data => {
         prompts = data;
